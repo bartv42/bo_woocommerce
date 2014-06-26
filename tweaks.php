@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Admin Filter By WooCommerce Featured Products
+Plugin Name: A bag of tweaks
 Plugin URI: http://en.bainternet.info
-Description: adapted from http://wordpress.stackexchange.com/q/45436/2487. Allows you to show only Featured products, which will then allow for drag and drop sorting of Featured products
-Version: 1.0
-Author: Bainternet
-Author URI: http://en.bainternet.info
+Description: 
+Version: 
+Author: Bart Veldhuizen
+Author URI: http://www.blendernation.com
 */
 
 function fontawesome_dashboard() {
