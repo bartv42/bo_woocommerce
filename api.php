@@ -29,19 +29,48 @@ function blendercloud_api( $atts ) {
 		
 			// iterate over all subscriptions. Logic still needs to be defined
 			foreach( $subscriptions as $subscription ) {
-				
+				//print_r($subscription);
 				// regular subscription
 				if( $subscription['status'] == 'active' && $subscription['product_id'] == 14 ) {
-					$user_data['cloud_access'] = '1';
-//					$user_data['expiry_date'] = $subscriptions['expiry_date'];		
+					$tmp = array();
+					$tmp['cloud_access'] = '1';
+					$tmp['account_type'] = 'individual';
 
-					if( $user_data['expiry_date'] != 0 ) {
-						$user_data['next_payment_date'] = $subscription['expiry_date'];
+					if( $subscription['expiry_date'] != 0 ) {
+						$tmp['next_payment_date'] = $subscription['expiry_date'];
 					} else {
-						$user_data['next_payment_date'] = $subscription['trial_expiry_date'];						
+						$tmp['next_payment_date'] = $subscription['trial_expiry_date'];						
 					}
-							
+					
+					$user_data['subscriptions'][]=$tmp;
 				}
+				
+				// team subscription
+				if( $subscription['status'] == 'active' && $subscription['product_id'] == 73 ) {
+					$tmp = array();
+					$tmp['cloud_access'] = '1';
+					$tmp['account_type'] = 'team';
+
+					if( $subscription['expiry_date'] != 0 ) {
+						$tmp['next_payment_date'] = $subscription['expiry_date'];
+					} else {
+						$tmp['next_payment_date'] = $subscription['trial_expiry_date'];						
+					}
+					
+					// use variation ID to get number of subscriptions
+					$variation_id = $subscription['variation_id'];
+					$sku = strtoupper( get_post_meta( $variation_id, '_sku', true ));
+					
+					$members=0;
+					
+					if( strpos( $sku, 'CLOUD-TEAM-') === 0 ) {
+						$team_members = (int)substr( $sku, 11, strlen($sku)-11);
+					}
+										
+					$tmp['team_members'] = $team_members;
+					
+					$user_data['subscriptions'][]=$tmp;
+				}				
 			}
 		
 		} else {
@@ -55,6 +84,8 @@ function blendercloud_api( $atts ) {
    	 $user_data['cloud_access'] = '0';
 		
 	}
+	
+	//echo "<pre>";print_r($user_data);
 	
 	echo json_encode($user_data);
 	die();

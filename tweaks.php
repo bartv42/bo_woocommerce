@@ -8,6 +8,8 @@ Author: Bart Veldhuizen
 Author URI: http://www.blendernation.com
 */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 function fontawesome_dashboard() {
    wp_enqueue_style('fontawesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css', '', '4.0.3', 'all'); 
 }
@@ -36,6 +38,7 @@ function wpse45436_admin_posts_filter_restrict_manage_posts(){
         $values = array(
             'PayPal' => 'PayPal', 
             'Bank transfer' => 'Direct Bank Transfer',
+			'BitCoin' => 'Bitcoin Payment'
         );
         ?>
 		<i class="fa fa-money"></i>
@@ -79,3 +82,30 @@ function wpse45436_posts_filter( $query ){
         $query->query_vars['meta_value'] = $_GET['PaymentType'];
     }
 }
+
+/***
+ * Determine the correct merchant account ID for different currencies
+ */
+function bo_get_braintree_merchant_account_id( $default_id ) {	
+
+	$curr = WC_Aelia_CurrencySwitcher::instance()->get_selected_currency();
+	
+	switch( $curr ) {
+		case 'USD':
+			return '46njsqh7fdhyk3fc';
+		case 'EUR':
+			return 'BlenderInstituteEUR';
+		default:
+			wp_die( 'Invalid currency selected in bo_Gateway_Braintree::get_merchant_account_id()' );
+	}
+}
+add_filter( 'wc_braintree_get_merchant_account_id', 'bo_get_braintree_merchant_account_id' );
+
+
+/***
+ * Blender Cloud API
+ */
+include( 'api.php' );
+
+
+
